@@ -87,36 +87,40 @@ def draw_math_grid(image, show_grid=True, show_axis=True):
     draw = ImageDraw.Draw(img_canvas)
     width, height = img_canvas.size
     
-    # 폰트 설정 (기본 폰트 사용하되 크기 조절이 어려울 경우 아래 코드 사용)
-    # 시스템에 폰트 파일이 있다면 ImageFont.truetype("arial.ttf", 20) 등을 권장합니다.
+    # 폰트 설정 (기본 폰트 사용 시 에러 방지)
     try:
-        font = ImageFont.truetype("arial.ttf", 20) # 윈도우 환경 등
+        # 윈도우 등 환경에선 폰트 사이즈 조절 가능
+        font = ImageFont.truetype("arial.ttf", 20)
     except:
-        font = ImageFont.load_default() # 폰트가 없으면 기본값 사용
+        # 폰트 파일이 없는 경우 기본값 사용
+        font = ImageFont.load_default()
     
     grid_size = 40
     axis_offset = 40 
     
+    # 그리드 및 숫자 그리기
     if show_grid:
-        # 세로선 및 x축 숫자
+        # 세로선 (x축)
         for i, x in enumerate(range(axis_offset, width, grid_size)):
-            draw.line([(x, 0), (x, height)], fill=(220, 220, 220), width=1)
-            # 숫자가 0이면 생략(원점 표시와 겹침 방지)
+            draw.line([(x, 0), (x, height)], fill=(200, 200, 200), width=1)
+            # x축 숫자 표기 (원점 제외)
             if i > 0:
-                draw.text((x - 5, height - axis_offset + 5), str(i), fill=(100, 100, 100), font=font)
+                draw.text((x - 5, height - axis_offset + 5), str(i), fill=(0, 0, 0), font=font)
             
-        # 가로선 및 y축 숫자
+        # 가로선 (y축)
         for i, y in enumerate(range(height - axis_offset, 0, -grid_size)):
-            draw.line([(0, y), (width, y)], fill=(220, 220, 220), width=1)
-            # y축 숫자
+            draw.line([(0, y), (width, y)], fill=(200, 200, 200), width=1)
+            # y축 숫자 표기 (원점 제외)
             if i > 0:
-                draw.text((axis_offset - 25, y - 5), str(i), fill=(100, 100, 100), font=font)
+                draw.text((axis_offset - 25, y - 5), str(i), fill=(0, 0, 0), font=font)
             
+    # 축 강조
     if show_axis:
         axis_color = (255, 69, 0)
         draw.line([(0, height - axis_offset), (width, height - axis_offset)], fill=axis_color, width=3)
         draw.line([(axis_offset, 0), (axis_offset, height)], fill=axis_color, width=3)
         
+        # 라벨 (0, X, Y)
         draw.text((axis_offset - 15, height - axis_offset + 5), "0", fill=axis_color, font=font)
         draw.text((width - 20, height - axis_offset - 15), "X", fill=axis_color, font=font)
         draw.text((axis_offset + 10, 5), "Y", fill=axis_color, font=font)
