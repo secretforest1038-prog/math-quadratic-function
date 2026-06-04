@@ -209,5 +209,3 @@ if video_path is not None:
         except Exception as e:
             st.error(f"영상 분석 중 오류가 발생했습니다. 파일 형식을 다시 확인해 주세요. (에러 내용: {e})")
 
-# 테스트용 코드 (함수 내부에 넣어서 확인)
-draw.text((100, 100), "TEST", fill=(255, 255, 255))
