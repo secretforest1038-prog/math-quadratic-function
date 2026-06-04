@@ -79,42 +79,47 @@ def generate_strobe_image(video_path, frame_interval=3):
 # -------------------------------------------------------------------------
 # [기능 3: 수학적 요소(모눈종이, 좌표축) 추가 함수]
 # -------------------------------------------------------------------------
+from PIL import Image, ImageDraw, ImageFont # ImageFont 추가 임포트 필요
+
 def draw_math_grid(image, show_grid=True, show_axis=True):
     """모눈종이와 함께 x, y축 숫자를 표시합니다."""
     img_canvas = image.copy()
     draw = ImageDraw.Draw(img_canvas)
     width, height = img_canvas.size
     
-    grid_size = 40  # 그리드 한 칸의 크기 (픽셀)
-    axis_offset = 40 # 축 여백
+    # 폰트 설정 (기본 폰트 사용하되 크기 조절이 어려울 경우 아래 코드 사용)
+    # 시스템에 폰트 파일이 있다면 ImageFont.truetype("arial.ttf", 20) 등을 권장합니다.
+    try:
+        font = ImageFont.truetype("arial.ttf", 20) # 윈도우 환경 등
+    except:
+        font = ImageFont.load_default() # 폰트가 없으면 기본값 사용
     
-    # 1. 모눈종이 및 숫자 그리기
+    grid_size = 40
+    axis_offset = 40 
+    
     if show_grid:
         # 세로선 및 x축 숫자
         for i, x in enumerate(range(axis_offset, width, grid_size)):
             draw.line([(x, 0), (x, height)], fill=(220, 220, 220), width=1)
-            # x축 숫자 (칸 번호)
-            draw.text((x - 5, height - axis_offset + 5), str(i), fill=(100, 100, 100))
+            # 숫자가 0이면 생략(원점 표시와 겹침 방지)
+            if i > 0:
+                draw.text((x - 5, height - axis_offset + 5), str(i), fill=(100, 100, 100), font=font)
             
         # 가로선 및 y축 숫자
         for i, y in enumerate(range(height - axis_offset, 0, -grid_size)):
             draw.line([(0, y), (width, y)], fill=(220, 220, 220), width=1)
-            # y축 숫자 (칸 번호, 원점은 0으로 표시)
+            # y축 숫자
             if i > 0:
-                draw.text((axis_offset - 25, y - 5), str(i), fill=(100, 100, 100))
+                draw.text((axis_offset - 25, y - 5), str(i), fill=(100, 100, 100), font=font)
             
-    # 2. x축, y축 강조하기
     if show_axis:
         axis_color = (255, 69, 0)
-        # x축
         draw.line([(0, height - axis_offset), (width, height - axis_offset)], fill=axis_color, width=3)
-        # y축
         draw.line([(axis_offset, 0), (axis_offset, height)], fill=axis_color, width=3)
         
-        # 원점 및 축 라벨
-        draw.text((axis_offset - 15, height - axis_offset + 5), "0", fill=axis_color)
-        draw.text((width - 20, height - axis_offset - 15), "X", fill=axis_color)
-        draw.text((axis_offset + 10, 5), "Y", fill=axis_color)
+        draw.text((axis_offset - 15, height - axis_offset + 5), "0", fill=axis_color, font=font)
+        draw.text((width - 20, height - axis_offset - 15), "X", fill=axis_color, font=font)
+        draw.text((axis_offset + 10, 5), "Y", fill=axis_color, font=font)
         
     return img_canvas
 
